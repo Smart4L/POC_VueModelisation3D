@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>4L</title>
+    <script type="text/javascript" src="./three.js"></script>
+    <script type="text/javascript" src="./STLLoader.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<button class="btn waves-effect waves-light zmoins">Z-</button>
+<button class="btn waves-effect waves-light zplus">Z+</button>
+<br>
+<button class="btn waves-effect waves-light xmoins">X-</button>
+<button class="btn waves-effect waves-light xplus">X+</button>
+<br>
+<button class="btn waves-effect waves-light ymoins">Y-</button>
+<button class="btn waves-effect waves-light yplus">Y+</button>
+
+
+<!--Div avec le rendu 3D-->
+<div id="rendu">
+</div>
+
+<script type="text/javascript">
+
+    // Bouton de commande
+    const button_gauche = document.querySelector('.zplus');
+    const button_droite = document.querySelector('.zmoins');
+
+    const button_gauche2 = document.querySelector('.xplus');
+    const button_droite2 = document.querySelector('.xmoins');
+
+    const button_gauche3 = document.querySelector('.yplus');
+    const button_droite3 = document.querySelector('.ymoins');
+
+
+    // Load de Three.js
+    function init() {
+
+        // On creer une scene qui contiendra tous les éléments (light,objet etc..)
+        var scene = new THREE.Scene();
+        // Création de la camera et de sa position
+        var camera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 1 , 1000);
+
+        // On défini la taille du rendu
+        var webGLRenderer = new THREE.WebGLRenderer();
+        webGLRenderer.setClearColor(new THREE.Color(0x000, 1.0));
+        webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+        webGLRenderer.shadowMapEnabled = true;
+
+        // On pointe la camera au centre de la scene
+        camera.position.x = 150;
+        camera.position.y = 150;
+        camera.position.z = 150;
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // Ajout des lumiere pour les ombres
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(150, 150, 150);
+        scene.add(spotLight);
+
+        // On défini dans quel div se fera le rendu
+        document.getElementById("rendu").appendChild(webGLRenderer.domElement);
+
+    
+        // Load du fichier STL et de sa couleur
+        var loader = new THREE.STLLoader();
+        var group = new THREE.Object3D();
+        loader.load("./4L_modele.stl", function (geometry) {
+            console.log(geometry);
+            var mat = new THREE.MeshLambertMaterial({color: 0xf5f5dc});
+           group = new THREE.Mesh(geometry, mat);
+           geometry.center();
+
+          
+            group.scale.set(2.5, 2.5, 2.5);
+            scene.add(group);
+        });
+
+        render();
+
+        // Gestion du bouton de rotation Z-
+        var timer;
+        button_gauche.addEventListener('mousedown', event => {
+            timer=setInterval(function(){
+                group.rotation.z += 0.02
+                }, 50);
+            });
+
+        button_gauche.addEventListener("mouseup", function(){
+        if (timer) clearInterval(timer)
+        });
+
+        // Gestion du bouton de rotation Z+
+        var timer2;
+        button_droite.addEventListener('mousedown', event => {
+            timer2=setInterval(function(){
+                group.rotation.z -= 0.02
+                }, 50);
+            });
+
+        button_droite.addEventListener("mouseup", function(){
+        if (timer2) clearInterval(timer2)
+        });
+
+          // Gestion du bouton de rotation X-
+          var timer3;
+        button_gauche2.addEventListener('mousedown', event => {
+            timer=setInterval(function(){
+                group.rotation.x += 0.02
+                }, 50);
+            });
+
+        button_gauche2.addEventListener("mouseup", function(){
+        if (timer) clearInterval(timer)
+        });
+
+        // Gestion du bouton de rotation X+
+        var timer4;
+        button_droite2.addEventListener('mousedown', event => {
+            timer2=setInterval(function(){
+                group.rotation.x -= 0.02
+                }, 50);
+            });
+
+        button_droite2.addEventListener("mouseup", function(){
+        if (timer2) clearInterval(timer2)
+        });
+
+        // Gestion du bouton de rotation Y-
+        var timer4;
+        button_gauche3.addEventListener('mousedown', event => {
+            timer=setInterval(function(){
+                group.rotation.y += 0.02
+                }, 50);
+            });
+
+        button_gauche3.addEventListener("mouseup", function(){
+        if (timer) clearInterval(timer)
+        });
+
+        // Gestion du bouton de rotation Y+
+        var timer4;
+        button_droite3.addEventListener('mousedown', event => {
+            timer2=setInterval(function(){
+                group.rotation.y -= 0.02
+                }, 50);
+            });
+
+        button_droite3.addEventListener("mouseup", function(){
+        if (timer2) clearInterval(timer2)
+        });
+        
+        // Rendu
+        function render() {
+            requestAnimationFrame(render);
+            webGLRenderer.render(scene, camera);
+        }
+    }
+    window.onload = init;
+</script>
+
+</body>
+
+</html>
